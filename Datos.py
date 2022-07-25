@@ -12,6 +12,7 @@ import time
 import Archivos as arch
 
 def Descarga_datos_gob_arg(Enlace):
+    print(Enlace)
     busqueda = [
         "museo",
         "cine",
@@ -22,11 +23,8 @@ def Descarga_datos_gob_arg(Enlace):
         "salas_de_cine",
         "bibliotecas_populares",
         ]
-    print("a")
     pagina = req.get(Enlace, allow_redirects=True)
     codigo = str(pagina.content)
-    codigo = codigo.split("\\n")
-    arch.Sobrescribir("codigo.txt", codigo)
     enlace = arch.Buscar_Enlace(codigo)
     archivo = req.get(enlace, allow_redirects=True)
     n = 0
@@ -55,8 +53,10 @@ def Descarga_datos_gob_arg(Enlace):
     date = date[:date.index(" ")]
     date = date.split("-")
     nombre = nombre + categoria + "-" + date[2] + "-" + date[1] + "-" + date[0] + ".csv"
-    contenido = str(archivo.content)[3:-1]
-    contenido = contenido.split("\n")
+    contenido = str(archivo.content)[2:-1]
+    contenido = arch.Conversion(contenido)
+    contenido = arch.Normaliza(contenido)
+    contenido = contenido.split("\\n")
     arch.Sobrescribir(nombre, contenido)
     return nombre
     
@@ -64,9 +64,10 @@ def Descarga_datos_gob_arg(Enlace):
 nombres = []
 enlaces = arch.Leer_Archivos("Enlaces.txt")
 if enlaces != None:
-    enlaces = enlaces.split("\\n")
+    enlaces = enlaces.split("\n")
     for i in enlaces:
-        nombres.append(Descarga_datos_gob_arg(i))
+        if(len(i)>0):
+            nombres.append(Descarga_datos_gob_arg(i))
 f = open("UltimosArchivos.txt", "w")
 for i in nombres:
     f.write(i+"\n")

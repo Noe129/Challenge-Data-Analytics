@@ -9,17 +9,53 @@ import os
 import Archivos as arch
 import pandas as pd
 
-rutas = arch.Leer_Archivos("UltimosArchivos.txt")
+def CapitalizaDicTab(tablas):
+    for i in tablas.keys():
+        columna = []
+        for j in tablas[i]:
+            columna.append(j.capitalize())
+        tablas[i].columns = columna
+    return tablas
 
-rutas = rutas.split("\n")[:-1]
-datos = {}
-aaaaaaa = pd.read_csv(rutas[0])
-# for i in rutas:
-#     datos[i[:i.index("\\")]] = pd.read_csv(i)
-    
+def DicTablas(NombreArch, Capitaliza = False):    
+    rutas = arch.Leer_Archivos(NombreArch)
+    rutas = rutas.split("\n")[:-1]
+    datos = {}
+    for i in rutas:
+        datos[i[:i.index("\\")]] = pd.read_csv(i)
+    if Capitaliza:
+        CapitalizaDicTab(datos)
+    return datos
 
-# CarpetasDisponibles = []
-# for i in os.listdir():
-#     if i in ListaBuscar:
-#         CarpetasDisponibles.append(i)
-    
+def TablaUnica(Tablas, NombreArch = None, Lista = None, diccionario = False):
+    if NombreArch!= None:
+        EncabezadosDeLosDatos = arch.Leer_Archivos(NombreArch).split("\n")
+    else:
+        EncabezadosDeLosDatos = []
+    if Lista != None:
+        EncabezadosDeLosDatos = EncabezadosDeLosDatos + Lista
+    if(diccionario == True):
+        indice = list(Tablas.keys())
+    else:
+        indice = range(len(Tablas))
+    for i in indice:
+        for j in Tablas[i].columns:
+            if j not in EncabezadosDeLosDatos:
+                Tablas[i] = Tablas[i].drop([j], axis=1)
+    tabla_unica = Tablas[indice[0]]
+    for i in indice[1:]:
+        tabla_unica = pd.concat([tabla_unica, Tablas[i]], axis=0)
+    return tabla_unica
+
+datos = DicTablas("UltimosArchivos.txt", Capitaliza = True, )
+tabla1 = TablaUnica(datos, NombreArch = "Tablas.txt", diccionario = True)
+datos = DicTablas("UltimosArchivos.txt", Capitaliza = True)
+tabla2 = TablaUnica(datos, NombreArch = "Tablas.txt", Lista = ["Fuente"], diccionario = True)
+datos = DicTablas("UltimosArchivos.txt", Capitaliza = True)
+cine = ["Cod_loc",
+        "Nombre",
+        "Provincia",
+        "Pantallas",
+        "Butacas",
+        "Espacio_incaa"]
+tabla3 = TablaUnica([datos["salas_de_cine"]], Lista = cine)

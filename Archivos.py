@@ -32,6 +32,7 @@ def Buscar_Enlace(codigo):
         inicio2 = inicio
         inicio = codigo.index("href", inicio+1)
     enlace = codigo[inicio2+6:fin+4]
+    return enlace
 
 def Sobrescribir(Nombre, Texto):    
     try:
@@ -42,3 +43,29 @@ def Sobrescribir(Nombre, Texto):
     except:
         print("Direccion erronea")
             
+def Conversion(cadena):
+    f = open("Conversion.csv", "r", encoding="utf-8")
+    contenido = f.read()
+    f.close
+    contenido = contenido.split("\n")
+    for i in range(len(contenido)):
+        contenido[i] = contenido[i].split(",")
+    for i in range(len(contenido)):
+        if(len(contenido[i]) > 2):
+            cadena = cadena.replace(contenido[i][2], contenido[i][1])
+    return cadena
+
+def Normaliza(cadena):
+    remplazar = (
+        ("á", "a"),
+        ("é", "e"),
+        ("í", "i"),
+        ("ó", "o"),
+        ("ú", "u"),
+        ("\\r", ""),
+        ("Direccion","Domicilio"),
+        ("direccion","Domicilio")
+        )
+    for a, b in remplazar:
+        cadena = cadena.replace(a,b)
+    return cadena

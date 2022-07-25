@@ -1,0 +1,12 @@
+Cod_loc
+Idprovincia
+Iddepartamento
+Categoria
+Provincia
+Localidad
+Nombre
+Domicilio
+Cp
+Telefono
+Mail
+Web

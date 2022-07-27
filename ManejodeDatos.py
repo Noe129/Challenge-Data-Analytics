@@ -50,7 +50,21 @@ def TablaUnica(Tablas, NombreArch = None, Lista = None, diccionario = False):
 datos = DicTablas("UltimosArchivos.txt", Capitaliza = True, )
 tabla1 = TablaUnica(datos, NombreArch = "Tablas.txt", diccionario = True)
 datos = DicTablas("UltimosArchivos.txt", Capitaliza = True)
-tabla2 = TablaUnica(datos, NombreArch = "Tablas.txt", Lista = ["Fuente"], diccionario = True)
+tabla2 = TablaUnica(datos, Lista = ["Categoria","Fuente", "Provincia"], diccionario = True)
+categoria = pd.DataFrame(tabla2["Categoria"].value_counts().reset_index())
+categoria.columns = ['Categoria', 'Conteo Categoria']
+
+fuente = pd.DataFrame(tabla2["Fuente"].value_counts().reset_index())
+fuente.columns = ['Fuente', 'Conteo Fuente']
+
+provincia = pd.DataFrame(tabla2[["Categoria","Provincia"]].value_counts().reset_index())
+provincia.columns = ['Categoria', 'Provincia', 'Conteo Categoriaxprovincia']
+
+df2 = pd.merge(tabla2, categoria, on='Categoria')
+df2 = pd.merge(df2, fuente, on='Fuente')
+df2 = pd.merge(df2, provincia, on=['Categoria', 'Provincia'])
+
+
 datos = DicTablas("UltimosArchivos.txt", Capitaliza = True)
 cine = ["Cod_loc",
         "Nombre",
